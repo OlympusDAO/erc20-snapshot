@@ -52,7 +52,7 @@ const parameters = {
       type: "input",
       name: "checkIfContract",
       message: "Check addresses if they are contracts or wallets?",
-      default: "yes"
+      default: "true"
     }
   ],
   knownTypes: path.join(process.cwd(), "/.cache/known-types.json"),

@@ -16,7 +16,7 @@ const getMinimal = pastEvents => {
       transactionHash: tx.transactionHash,
       from: tx.returnValues["0"],
       to: tx.returnValues["1"],
-      value: tx.returnValues["2"]._hex
+      value: tx.returnValues["2"]
     };
   });
 };
@@ -24,7 +24,7 @@ const getMinimal = pastEvents => {
 module.exports.getEvents = async symbol => {
   const directory = Parameters.eventsDownloadFolder.replace(/{token}/g, symbol);
   var files = await readdirAsync(directory);
-  files.sort((a,b) => {
+  files.sort((a, b) => {
     return parseInt(a.split(".")[0]) - parseInt(b.split(".")[0]);
   });
   let events = [];

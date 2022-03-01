@@ -7,6 +7,8 @@ const Events = require("./events/blockchain");
 const Export = require("./export");
 
 const start = async () => {
+  // Check if config file (in snapshot.config.json by default) exists. If not, show prompt
+  // questions to create it.
   await Config.checkConfig();
   const format = Config.getConfig().format;
   const result = await Events.get();
@@ -15,6 +17,8 @@ const start = async () => {
   const balances = await Balances.createBalances(result);
 
   console.log("Exporting balances");
+  console.log(`Found ${balances.length} holders.`);
+  console.log("Exporting...");
   await Export.exportBalances(result.symbol, balances, format);
 };
 

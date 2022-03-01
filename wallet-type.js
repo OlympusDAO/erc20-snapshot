@@ -19,7 +19,7 @@ const findTypeFromCache = (cache, wallet) => {
 };
 
 module.exports.addType = async balances => {
-  if (Config.checkIfContract.toLowerCase() !== "yes") {
+  if (!Config.checkIfContract) {
     return balances;
   }
 

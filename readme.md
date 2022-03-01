@@ -32,6 +32,8 @@ erc20-snapshot
 
 ## Configuration File / Prompt Parameters
 
+To avoid getting prompted for each configuration parameters, each time `erc20-snapshot` is ran, have a ./snapshot.config.json file at the same location as `erc20-snapshot` is executed.
+
 ```json
 {
   "provider": "https://mainnet.infura.io/v3/<key>",
@@ -41,7 +43,7 @@ erc20-snapshot
   "format": "json",
   "blocksPerBatch": 2500,
   "delay": 0,
-  "checkIfContract": "yes"
+  "checkIfContract": true
 }
 ```
 
