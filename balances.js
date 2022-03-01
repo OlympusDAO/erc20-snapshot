@@ -3,6 +3,7 @@ var BigNumber = require("bignumber.js");
 const enumerable = require("linq");
 
 module.exports.createBalances = async data => {
+  // Map object which will contain the total in withdrawals and deposits made by each address
   const balances = new Map();
   const closingBalances = [];
 
@@ -30,6 +31,8 @@ module.exports.createBalances = async data => {
     }
   };
 
+  // Iterate through all the events and store, for each address, the total in withdrawals and deposits, respectively,
+  // in the Map object `balances`
   for (const event of data.events) {
     setDeposits(event);
     setWithdrawals(event);

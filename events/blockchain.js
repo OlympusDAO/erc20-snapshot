@@ -49,6 +49,7 @@ const tryGetEvents = async (start, end, symbol) => {
     }
   } catch (e) {
     console.log("Could not get events due to an error. Now checking block by block.");
+    console.log("Error message:", e.message);
     await BlockByBlock.tryBlockByBlock(Contract, start, end, symbol);
   }
 };

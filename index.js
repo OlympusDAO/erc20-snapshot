@@ -11,9 +11,11 @@ const start = async () => {
   // questions to create it.
   await Config.checkConfig();
   const format = Config.getConfig().format;
+  // Get all the events
   const result = await Events.get();
 
   console.log("Calculating balances of %s (%s)", result.name, result.symbol);
+  // Calculate the balances from the events
   const balances = await Balances.createBalances(result);
 
   console.log("Exporting balances");
