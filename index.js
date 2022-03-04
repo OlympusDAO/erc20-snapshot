@@ -11,17 +11,19 @@ const start = async () => {
   // questions to create it.
   await Config.checkConfig();
   const format = Config.getConfig().format;
-  // Get all the events
-  const result = await Events.get();
+  // Get all the events for the specified contract address
+  // Format of `events` is [event1, event2, ...] where the events are
+  // ordered chronologically
+  const events = await Events.get();
 
-  console.log("Calculating balances of %s (%s)", result.name, result.symbol);
-  // Calculate the balances from the events
-  const balances = await Balances.createBalances(result);
+  console.log("Calculating balances of %s (%s)", events.name, events.symbol);
+  // Calculate the current balances for all the addresses from all the events
+  const balances = await Balances.createBalances(events);
 
   console.log("Exporting balances");
   console.log(`Found ${balances.length} holders.`);
   console.log("Exporting...");
-  await Export.exportBalances(result.symbol, balances, format);
+  await Export.exportBalances(events.symbol, balances, format);
 };
 
 (async () => {

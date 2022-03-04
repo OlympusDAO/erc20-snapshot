@@ -29,14 +29,19 @@ const groupBy = (objectArray, property) => {
 
 const tryGetEvents = async (start, end, symbol) => {
   try {
+    // We only get past events for the specified contract. This makes the data fetching much faster than if we had
+    // to fetch all the data from every single block and filter afterwards for contract address
     const pastEvents = await Contract.getPastEvents("Transfer", { fromBlock: start, toBlock: end });
 
     if (pastEvents.length) {
       console.info("Successfully imported ", pastEvents.length, " events");
     }
 
+    // Group events belonging to the same block number,
+    // the format of `group` is {blockNumber1: [events1], blockNumber2: [events2], ...}
     const group = groupBy(pastEvents, "blockNumber");
 
+    // Iterate through all the blocks in current batch
     for (let key in group) {
       if (group.hasOwnProperty(key)) {
         const blockNumber = key;
@@ -44,12 +49,14 @@ const tryGetEvents = async (start, end, symbol) => {
 
         const file = Parameters.eventsDownloadFilePath.replace(/{token}/g, symbol).replace(/{blockNumber}/g, blockNumber);
 
+        // Store all the events from the same block into a single file with name corresponding to block number
         FileHelper.writeFile(file, data);
       }
     }
   } catch (e) {
     console.log("Could not get events due to an error. Now checking block by block.");
     console.log("Error message:", e.message);
+    // If block batch fetching fails, we switch to fetching block-by-block
     await BlockByBlock.tryBlockByBlock(Contract, start, end, symbol);
   }
 };
@@ -62,8 +69,12 @@ module.exports.get = async () => {
   var fromBlock = parseInt(Config.fromBlock) || 0;
   const blocksPerBatch = parseInt(Config.blocksPerBatch) || 0;
   const delay = parseInt(Config.delay) || 0;
+  // TODO: `toBlock` always equal to latest block? Setting `toBlock` in snapshot.config.json
+  // seems to be inconsequential - fix
   const toBlock = blockHeight;
 
+  // If blocks have already been fetched for this contract, we start fetching from
+  // the last fetched block instead of starting all over from the beginning
   const lastDownloadedBlock = await LastDownloadedBlock.get(symbol);
 
   if (lastDownloadedBlock) {
@@ -73,6 +84,7 @@ module.exports.get = async () => {
 
   console.log("From %d to %d", fromBlock, toBlock);
 
+  // Fetch the events, batch by batch
   let start = fromBlock;
   let end = fromBlock + blocksPerBatch;
   let i = 0;
@@ -80,6 +92,7 @@ module.exports.get = async () => {
   while (end < toBlock) {
     i++;
 
+    // Sleep time in between batch fetches
     if (delay) {
       await sleep(delay);
     }
@@ -88,6 +101,7 @@ module.exports.get = async () => {
 
     await tryGetEvents(start, end, symbol);
 
+    // Next batch starts at the end of previous batch + 1
     start = end + 1;
     end = start + blocksPerBatch;
 
@@ -96,6 +110,7 @@ module.exports.get = async () => {
     }
   }
 
+  // Load all the events from the block files into memory
   const events = await BlockReader.getEvents(symbol);
 
   const data = {
