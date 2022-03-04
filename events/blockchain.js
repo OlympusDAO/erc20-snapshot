@@ -65,13 +65,20 @@ module.exports.get = async () => {
   const name = await Contract.methods.name().call();
   const symbol = await Contract.methods.symbol().call();
   const decimals = await Contract.methods.decimals().call();
-  const blockHeight = await web3.eth.getBlockNumber();
+  // TODO: if `Config.fromBlock` "earliest" or undefined, consider fromBlock
+  // as the first block where there is a transaction for the target contract address
   var fromBlock = parseInt(Config.fromBlock) || 0;
+  var toBlock;
   const blocksPerBatch = parseInt(Config.blocksPerBatch) || 0;
   const delay = parseInt(Config.delay) || 0;
-  // TODO: `toBlock` always equal to latest block? Setting `toBlock` in snapshot.config.json
-  // seems to be inconsequential - fix
-  const toBlock = blockHeight;
+
+  // if `Config.toBlock` undefined or "latest", the last block is current block height
+  if (!Config.toBlock || Config.toBlock === "latest") {
+    toBlock = await web3.eth.getBlockNumber();
+  // Else it's the block height defined in `Config.toBlock`
+  } else {
+    toBlock = parseInt(Config.toBlock);
+  }
 
   // If blocks have already been fetched for this contract, we start fetching from
   // the last fetched block instead of starting all over from the beginning
@@ -88,8 +95,9 @@ module.exports.get = async () => {
   let start = fromBlock;
   let end = fromBlock + blocksPerBatch;
   let i = 0;
+  let lastBatch = false;
 
-  while (end < toBlock) {
+  while (end <= toBlock) {
     i++;
 
     // Sleep time in between batch fetches
@@ -101,12 +109,15 @@ module.exports.get = async () => {
 
     await tryGetEvents(start, end, symbol);
 
+    if (lastBatch) break;
+
     // Next batch starts at the end of previous batch + 1
     start = end + 1;
     end = start + blocksPerBatch;
 
     if (end > toBlock) {
       end = toBlock;
+      lastBatch = true;
     }
   }
 
