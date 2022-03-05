@@ -95,7 +95,6 @@ module.exports.get = async () => {
   let start = fromBlock;
   let end = fromBlock + blocksPerBatch;
   let i = 0;
-  let lastBatch = false;
 
   while (end <= toBlock) {
     i++;
@@ -109,16 +108,15 @@ module.exports.get = async () => {
 
     await tryGetEvents(start, end, symbol);
 
-    if (lastBatch) break;
+    // Finished last batch; break
+    if (end === toBlock) break;
 
     // Next batch starts at the end of previous batch + 1
     start = end + 1;
     end = start + blocksPerBatch;
 
-    if (end > toBlock) {
-      end = toBlock;
-      lastBatch = true;
-    }
+    // Do last batch
+    if (end > toBlock) end = toBlock;
   }
 
   // Load all the events from the block files into memory
