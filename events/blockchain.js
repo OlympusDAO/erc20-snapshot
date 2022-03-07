@@ -126,6 +126,8 @@ module.exports.get = async () => {
     name,
     symbol,
     decimals,
+    fromBlock,
+    toBlock,
     events: events
   };
 

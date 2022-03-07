@@ -1,4 +1,5 @@
 "use strict";
+const { from } = require("linq");
 const path = require("path");
 const FileHelper = require("./file-helper");
 const Parameters = require("./parameters").get();
@@ -6,7 +7,7 @@ const WalletType = require("./wallet-type");
 
 const objectToCsv = require("csv-writer").createObjectCsvWriter;
 
-module.exports.exportBalances = async (symbol, balances, format) => {
+module.exports.exportBalances = async (symbol, balances, format, toBlock) => {
   const withType = await WalletType.addType(balances);
 
   const writeCsv = () => {
@@ -31,6 +32,6 @@ module.exports.exportBalances = async (symbol, balances, format) => {
   }
 
   console.log("Exporting JSON");
-  await FileHelper.writeFile(Parameters.outputFileNameJSON.replace(/{token}/g, symbol), withType);
+  await FileHelper.writeFile(Parameters.outputFileNameJSON.replace(/{token}/g, `${symbol}-${toBlock}`), withType);
   console.log("JSON export done!");
 };
