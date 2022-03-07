@@ -56,8 +56,7 @@ const parameters = {
     }
   ],
   knownTypes: path.join(process.cwd(), "/.cache/known-types.json"),
-  outputFileNameCSV: path.join(process.cwd(), "./balances/{token}.csv"),
-  outputFileNameJSON: path.join(process.cwd(), "./balances/{token}.json"),
+  outputFileName: path.join(process.cwd(), "./balances/{token}"),
   eventsDownloadFolder: path.join(process.cwd(), "./tx/{token}/"),
   eventsDownloadFilePath: path.join(process.cwd(), "./tx/{token}/{blockNumber}.json")
 };
