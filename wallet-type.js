@@ -6,6 +6,8 @@ const Parameters = require("./parameters").get();
 
 const web3 = new Web3(new Web3.providers.HttpProvider((Config || {}).provider || "http://localhost:8545"));
 
+const BATCH_SIZE = 20;
+
 const findTypeFromCache = (cache, wallet) => {
   if (cache && cache.length) {
     for (const entry of cache) {
@@ -23,27 +25,48 @@ module.exports.addType = async balances => {
     return balances;
   }
 
-  let counter = 0;
+  console.log("Determining address types.");
   let cache = await FileHelper.parseFile(Parameters.knownTypes);
 
-  for await (const balance of balances) {
-    counter++;
-    let type = findTypeFromCache(cache, balance.wallet);
-    console.log("%d of %d. Determining if %s is a contract.", counter, balances.length, balance.wallet);
+  var nContracts = 0;
+  var batchStartIdx = 0;
+  var batchEndIdx = BATCH_SIZE;
+  var nBalances = balances.length;
 
-    if (!type) {
-      type = "wallet";
+  while (batchEndIdx <= nBalances) {
+    // Get a balances batch (this is shallow copy so referencing objects inside this batch
+    // changes the original objects)
+    var balancesBatch = balances.slice(batchStartIdx, batchEndIdx);
+    await Promise.all(
+      balancesBatch.map(async balance => {
+        let type = findTypeFromCache(cache, balance.wallet);
+        if (!type) {
+          type = "wallet";
 
-      const code = await web3.eth.getCode(balance.wallet);
+          const code = await web3.eth.getCode(balance.wallet);
 
-      if (code != "0x") {
-        type = "contract";
-        console.log("✓", balance.wallet, "is a contract.");
-      }
-    }
+          if (code != "0x") {
+            nContracts++;
+            type = "contract";
+            console.log("✓", balance.wallet, "is a contract.");
+          }
+        }
+        balance.type = type;
+        return balance;
+      })
+    );
 
-    balance.type = type;
+    console.log(`${batchEndIdx}/${nBalances}`);
+    // Finished last batch; break
+    if (batchEndIdx === nBalances) break;
+
+    batchStartIdx = batchEndIdx;
+    batchEndIdx = batchStartIdx + BATCH_SIZE;
+
+    if (batchEndIdx > nBalances) batchEndIdx = nBalances;
   }
+
+  console.log(`Found ${nContracts} contracts out of ${nBalances} addresses.`);
 
   const knownTypes = enumerable
     .from(balances)
