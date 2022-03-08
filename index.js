@@ -3,7 +3,7 @@
 
 const Balances = require("./balances");
 const Config = require("./config");
-const Events = require("./events/blockchain");
+const Events = require("./lib/blockchain");
 const Export = require("./export");
 
 const start = async () => {
