@@ -16,13 +16,12 @@ const start = async () => {
   // ordered chronologically
   const events = await Events.get();
 
-  console.log("Calculating balances of %s (%s)", events.name, events.symbol);
+  console.log("Calculating balances of %s (%s)...", events.name, events.symbol);
   // Calculate the current balances for all the addresses from all the events
   const balances = await Balances.createBalances(events);
 
-  console.log("Exporting balances");
   console.log(`Found ${balances.length} holders.`);
-  console.log("Exporting...");
+  console.log("Exporting balances...");
   await Export.exportBalances(events.symbol, balances, format, events.toBlock);
 };
 
