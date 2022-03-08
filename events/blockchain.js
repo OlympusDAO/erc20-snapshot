@@ -89,7 +89,7 @@ module.exports.get = async () => {
     fromBlock = lastDownloadedBlock + 1;
   }
 
-  console.log("From %d to %d", fromBlock, toBlock);
+  console.log("Scanning for events from block", fromBlock, "to block", toBlock);
 
   // Fetch the events, batch by batch
   let start = fromBlock;
