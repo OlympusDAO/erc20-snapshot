@@ -46,11 +46,11 @@ module.exports.addType = async balances => {
           const code = await web3.eth.getCode(balance.wallet);
 
           if (code != "0x") {
-            nContracts++;
             type = "contract";
             console.log("✓", balance.wallet, "is a contract.");
           }
         }
+        if (type === "contract") nContracts++;
         balance.type = type;
         return balance;
       })

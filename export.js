@@ -6,11 +6,11 @@ const WalletType = require("./wallet-type");
 
 const objectToCsv = require("csv-writer").createObjectCsvWriter;
 
-module.exports.exportBalances = async (symbol, balances, format, toBlock) => {
+module.exports.exportBalances = async (events, balances, format) => {
   const withType = await WalletType.addType(balances);
 
   const writeCsv = () => {
-    const file = Parameters.outputFileName.replace(/{token}/g, `${symbol}-${toBlock}.csv`);
+    const file = Parameters.outputFileName.replace(/{token}/g, `${events.symbol}-${events.toBlock}.csv`);
     FileHelper.ensureDirectory(path.dirname(file));
 
     const writer = objectToCsv({
@@ -22,15 +22,18 @@ module.exports.exportBalances = async (symbol, balances, format, toBlock) => {
     writer.writeRecords(withType).then(() => console.log("CSV export done!"));
   };
 
-  if (["csv", "both"].indexOf(format.toLowerCase()) > -1) {
+  if (format.toLowerCase() === "csv") {
     writeCsv();
-
-    if (format.toLowerCase() === "csv") {
-      return;
-    }
+  } else if (format.toLowerCase() === "json") {
+    console.log("Exporting JSON");
+    await FileHelper.writeFile(Parameters.outputFileName.replace(/{token}/g, `${events.symbol}-${events.toBlock}.json`), withType);
+    console.log("JSON export done!");
   }
 
-  console.log("Exporting JSON");
-  await FileHelper.writeFile(Parameters.outputFileName.replace(/{token}/g, `${symbol}-${toBlock}.json`), withType);
-  console.log("JSON export done!");
+  // Delete previous balances file if exists
+  if (events.lastScannedBlock.status === "balances") {
+    console.log(`Deleting previous balances file ${events.lastScannedBlock.fileName}`);
+    await FileHelper.deleteFile(`${Parameters.outputFileName}/../${events.lastScannedBlock.fileName}`);
+  }
+  console.log("Finished.");
 };

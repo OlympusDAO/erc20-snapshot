@@ -22,7 +22,7 @@ const start = async () => {
 
   console.log(`Found ${balances.length} holders.`);
   console.log("Exporting balances...");
-  await Export.exportBalances(events.symbol, balances, format, events.toBlock);
+  await Export.exportBalances(events, balances, format);
 };
 
 (async () => {

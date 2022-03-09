@@ -9,6 +9,7 @@ const existsAsync = promisify(fs.exists);
 const makeDirectoryAsync = promisify(fs.mkdir);
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
+const deleteFileAsync = promisify(fs.unlink);
 
 const ensureDirectoryExists = async directory => {
   try {
@@ -25,6 +26,14 @@ module.exports.ensureDirectory = async directory => {
 module.exports.writeFile = async (filePath, data) => {
   await ensureDirectoryExists(path.dirname(filePath));
   await writeFileAsync(filePath, JSON.stringify(data, null, 2));
+};
+
+module.exports.deleteFile = async filePath => {
+  try {
+    await deleteFileAsync(filePath);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 module.exports.parseFile = async filePath => {
