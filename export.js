@@ -30,10 +30,10 @@ module.exports.exportBalances = async (events, balances, format) => {
     console.log("JSON export done!");
   }
 
-  // Delete previous balances file if exists
-  if (events.lastScannedBlock.status === "balances") {
-    console.log(`Deleting previous balances file ${events.lastScannedBlock.fileName}`);
-    await FileHelper.deleteFile(`${Parameters.outputFileName}/../${events.lastScannedBlock.fileName}`);
+  // Delete previous balances file if we're incremental loading
+  if (events.loadMode.mode === "incremental") {
+    console.log(`Deleting previous balances file ${events.loadMode.fileName}`);
+    await FileHelper.deleteFile(`${Parameters.outputFileName}/../${events.loadMode.fileName}`);
   }
   console.log("Finished.");
 };

@@ -12,8 +12,7 @@ const start = async () => {
   await Config.checkConfig();
   const format = Config.getConfig().format;
   // Get all the events for the specified contract address
-  // Format of `events` is [event1, event2, ...] where the events are
-  // ordered chronologically
+  // Format of `events` is [event1, event2, ...]
   const events = await Events.get();
 
   console.log("Calculating balances of %s (%s)...", events.name, events.symbol);
