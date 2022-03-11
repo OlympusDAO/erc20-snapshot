@@ -1,9 +1,7 @@
-"use strict";
+import { fs } from "fs";
+import { dirname } from "path";
 
-const fs = require("fs");
-const path = require("path");
-
-const { promisify } = require("util");
+import { promisify } from "util";
 
 const existsAsync = promisify(fs.exists);
 const makeDirectoryAsync = promisify(fs.mkdir);
@@ -12,35 +10,35 @@ const writeFileAsync = promisify(fs.writeFile);
 const deleteFileAsync = promisify(fs.unlink);
 
 const ensureDirectoryExists = async directory => {
-  try {
-    await makeDirectoryAsync(directory, { recursive: true });
-  } catch (err) {
-    console.log(err);
-  }
+	try {
+		await makeDirectoryAsync(directory, { recursive: true });
+	} catch (err) {
+		console.log(err);
+	}
 };
 
-module.exports.ensureDirectory = async directory => {
-  ensureDirectoryExists(directory);
+export const ensureDirectory = async directory => {
+	ensureDirectoryExists(directory);
 };
 
-module.exports.writeFile = async (filePath, data) => {
-  await ensureDirectoryExists(path.dirname(filePath));
-  await writeFileAsync(filePath, JSON.stringify(data, null, 2));
+export const writeFile = async (filePath, data) => {
+	await ensureDirectoryExists(dirname(filePath));
+	await writeFileAsync(filePath, JSON.stringify(data, null, 2));
 };
 
-module.exports.deleteFile = async filePath => {
-  try {
-    await deleteFileAsync(filePath);
-  } catch (err) {
-    console.log(err);
-  }
+export const deleteFile = async filePath => {
+	try {
+		await deleteFileAsync(filePath);
+	} catch (err) {
+		console.log(err);
+	}
 };
 
-module.exports.parseFile = async filePath => {
-  if (await existsAsync(filePath)) {
-    const contents = await readFileAsync(filePath);
-    return JSON.parse(contents.toString());
-  }
+export const parseFile = async filePath => {
+	if (await existsAsync(filePath)) {
+		const contents = await readFileAsync(filePath);
+		return JSON.parse(contents.toString());
+	}
 
-  return null;
+	return null;
 };

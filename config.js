@@ -1,32 +1,32 @@
-"use strict";
+import { fs } from "fs";
+import { exit } from "process";
+import  { prompt } from "inquirer";
+import { getParameters } from "./parameters";
 
-const fs = require("fs");
-const inquirer = require("inquirer");
+const Parameters = getParameters();
 
-const Parameters = require("./parameters").get();
-
-const { promisify } = require("util");
+import { promisify } from "util";
 const writeFileAsync = promisify(fs.writeFile);
 const fileExists = promisify(fs.exists);
 
-module.exports.checkConfig = async () => {
-  const exists = await fileExists(Parameters.configFileName);
+export const checkConfig = async () => {
+	const exists = await fileExists(Parameters.configFileName);
 
-  if (exists) {
-    return;
-  }
+	if (exists) {
+		return;
+	}
 
-  const config = await inquirer.prompt(Parameters.configQuestions);
-  await writeFileAsync("./snapshot.config.json", JSON.stringify(config, null, 2));
-  console.info("Configuration file was successfully created. Please run the program again.");
-  process.exit();
+	const config = await prompt(Parameters.configQuestions);
+	await writeFileAsync("./snapshot.config.json", JSON.stringify(config, null, 2));
+	console.info("Configuration file was successfully created. Please run the program again.");
+	exit();
 };
 
-module.exports.getConfig = () => {
-  try {
-    const contents = fs.readFileSync(Parameters.configFileName);
-    return JSON.parse(contents);
-  } catch (e) {
-    console.error("Configuration file was not found.");
-  }
+export const getConfig = () => {
+	try {
+		const contents = fs.readFileSync(Parameters.configFileName);
+		return JSON.parse(contents);
+	} catch (e) {
+		console.error("Configuration file was not found.");
+	}
 };

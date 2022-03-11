@@ -1,7 +1,5 @@
-"use strict";
+import abi from "./abi.json";
 
-const abi = require("./abi.json");
-
-module.exports.getABI = () => {
-  return abi;
+export const getABI = () => {
+	return abi;
 };
