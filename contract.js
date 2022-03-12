@@ -1,6 +1,6 @@
 import Web3 from "web3";
-import { getConfig } from "../config";
-import { getParameters } from "../parameters";
+import { getConfig } from "./config.js";
+import { getParameters } from "./parameters.js";
 
 const Config = getConfig();
 const Parameters = getParameters();

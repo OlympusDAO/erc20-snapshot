@@ -1,8 +1,11 @@
-const enumerable = require("linq");
-const Web3 = require("web3");
-const Config = require("./config").getConfig();
-const FileHelper = require("./file-helper");
-const Parameters = require("./parameters").get();
+import enumerable from "linq";
+import Web3 from "web3";
+import { getConfig } from "./config.js";
+import { getParameters } from "./parameters.js";
+import { parseFile, writeFile } from "./file-helper.js";
+
+const Config = getConfig();
+const Parameters = getParameters();
 
 const web3 = new Web3(new Web3.providers.HttpProvider((Config || {}).provider || "http://localhost:8545"));
 
@@ -20,13 +23,13 @@ const findTypeFromCache = (cache, wallet) => {
   return null;
 };
 
-module.exports.addType = async balances => {
+export const addType = async balances => {
   if (!Config.checkIfContract) {
     return balances;
   }
 
   console.log("Determining address types.");
-  let cache = await FileHelper.parseFile(Parameters.knownTypes);
+  let cache = await parseFile(Parameters.knownTypes);
 
   var nContracts = 0;
   var batchStartIdx = 0;
@@ -75,7 +78,7 @@ module.exports.addType = async balances => {
     })
     .toArray();
 
-  await FileHelper.writeFile(Parameters.knownTypes, knownTypes);
+  await writeFile(Parameters.knownTypes, knownTypes);
 
   return enumerable
     .from(balances)

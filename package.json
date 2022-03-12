@@ -2,6 +2,8 @@
   "name": "erc20-snapshot",
   "version": "1.0.2",
   "description": "ERC20 Token Snapshot",
+  "private": true,
+  "type": "module",
   "engines": {
     "node": "14.x"
   },
@@ -38,6 +40,7 @@
   "devDependencies": {
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.5.1"
   }

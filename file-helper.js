@@ -1,6 +1,5 @@
-import { fs } from "fs";
+import * as fs from 'fs';
 import { dirname } from "path";
-
 import { promisify } from "util";
 
 const existsAsync = promisify(fs.exists);

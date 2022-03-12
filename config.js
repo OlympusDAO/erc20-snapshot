@@ -1,6 +1,6 @@
-import { fs } from "fs";
-import  { prompt } from "inquirer";
-import { getParameters } from "./parameters";
+import * as fs from 'fs';
+import * as inquirer from "inquirer";
+import { getParameters } from "./parameters.js";
 
 const Parameters = getParameters();
 
@@ -15,7 +15,7 @@ export const checkConfig = async () => {
 		return;
 	}
 
-	const config = await prompt(Parameters.configQuestions);
+	const config = await inquirer.prompt(Parameters.configQuestions);
 	await writeFileAsync("./snapshot.config.json", JSON.stringify(config, null, 2));
 	console.info("Configuration file was successfully created. Please run the program again.");
 	process.exit();

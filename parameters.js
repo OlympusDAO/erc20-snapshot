@@ -1,6 +1,6 @@
 import { join } from "path";
 import { cwd } from "process";
-import { getABI } from "./abi";
+import { getABI } from "./abi.js";
 
 const parameters = {
 	abi: getABI(),
