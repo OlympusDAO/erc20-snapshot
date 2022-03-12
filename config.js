@@ -1,5 +1,4 @@
 import { fs } from "fs";
-import { exit } from "process";
 import  { prompt } from "inquirer";
 import { getParameters } from "./parameters";
 
@@ -19,7 +18,7 @@ export const checkConfig = async () => {
 	const config = await prompt(Parameters.configQuestions);
 	await writeFileAsync("./snapshot.config.json", JSON.stringify(config, null, 2));
 	console.info("Configuration file was successfully created. Please run the program again.");
-	exit();
+	process.exit();
 };
 
 export const getConfig = () => {

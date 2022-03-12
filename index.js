@@ -5,7 +5,7 @@ import "dotenv/config";
 import { createBalances } from "./balances";
 import { checkConfig, getConfig } from "./config";
 import { getEvents } from "./lib/blockchain";
-const Hasura = require("./lib/hasura");
+//const Hasura = require("./lib/hasura");
 const Export = require("./export");
 
 const start = async () => {
@@ -22,7 +22,7 @@ const start = async () => {
 	const balances = await createBalances(events);
 
 	// Write data to Hasura
-	await Hasura.write(events, balances);
+	//await Hasura.write(events, balances);
 
 	// Dump balances file locally
 	console.log(`Found ${balances.length} holders.`);
