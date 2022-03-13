@@ -55,6 +55,7 @@ const parameters = {
 		}
 	],
 	knownTypes: join(cwd(), "/.cache/known-types.json"),
+  previousRun: join(cwd(), "/.cache/previous-run.json"),
 	outputFileName: join(cwd(), "./balances/{token}"),
 	eventsDownloadFolder: join(cwd(), "./tx/{token}/"),
 	eventsDownloadFilePath: join(cwd(), "./tx/{token}/{blockNumber}.json")
