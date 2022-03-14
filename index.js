@@ -5,9 +5,12 @@ import "dotenv/config";
 import { createBalances } from "./balances.js";
 import { checkConfig } from "./config.js";
 import { getEvents } from "./lib/blockchain.js";
-//const Hasura = require("./lib/hasura");
+import { hasuraWrite } from "./lib/hasura.js";
 import { dumpBalancesFile } from "./export.js";
-import { config } from "dotenv";
+import { getConfig } from "./config.js";
+import { addType } from "./wallet-type.js";
+
+const Config = getConfig();
 
 const start = async () => {
   const startTime = new Date();
@@ -23,23 +26,28 @@ const start = async () => {
 	console.log("Calculating balances of %s (%s)...", eventData.name, eventData.symbol);
 	// Calculate the current balances
 	var balances = await createBalances(eventData);
-  console.log("Found", balances.length, "holders.");
 
-	// Write data to Hasura
-	//await Hasura.write(eventData, balances);
+  console.log("Found total of", balances.length, "holders.");
+  if (eventData.loadMode.mode == "INCREMENTAL-LOAD") {
+    console.log("Found", eventData.newAddresses.size, "addresses to insert/update in the INCREMENTAL LOAD.");
+    console.log("These addresses are:");
+    console.log(Array.from(eventData.newAddresses));
+  }
 
-  const endTimeHasura = new Date();
-  const endTimeHasuraStr = endTimeHasura.toUTCString();
-  console.log(`Finished Hasura write at ${endTimeHasuraStr}`);
+  if (Config.checkIfContract) {
+    balances = await addType(balances);
+  }
 
-	// Dump balances file locally
-  if (config.dumpBalancesFile) {
-	  console.log("Exporting balances...");
+  // Write data to Hasura
+  if (Config.writeToHasura) {
+    await hasuraWrite(eventData, balances, startTimeStr);
+  }
+
+	// Dump balances file locally (always dumps balances of all the addresses, doesn't matter
+  // if load mode is "INITIAL-LOAD" or "INCREMENTAL-LOAD")
+  if (Config.writeToLocalFile) {
 	  await dumpBalancesFile(eventData, balances);
   }
-  const endTimeFinish = new Date();
-  const endTimeFinishStr = endTimeFinish.toUTCString();
-  console.log(`Finished dumping file locally at ${endTimeFinishStr}`);
 };
 
 (async () => {

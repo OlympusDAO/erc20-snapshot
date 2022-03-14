@@ -55,7 +55,7 @@ const parameters = {
 		}
 	],
 	knownTypes: join(cwd(), "/.cache/known-types.json"),
-  previousRun: join(cwd(), "/.cache/previous-run.json"),
+  previousHasuraWrite: join(cwd(), "/.cache/previous-hasura-write.json"),
 	outputFileName: join(cwd(), "./balances/{token}"),
 	eventsDownloadFolder: join(cwd(), "./tx/{token}/"),
 	eventsDownloadFilePath: join(cwd(), "./tx/{token}/{blockNumber}.json")

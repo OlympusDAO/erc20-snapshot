@@ -24,9 +24,6 @@ const findTypeFromCache = (cache, wallet) => {
 };
 
 export const addType = async balances => {
-  if (!Config.checkIfContract) {
-    return balances;
-  }
 
   console.log("Determining address types.");
   let cache = await parseFile(Parameters.knownTypes);
@@ -35,6 +32,7 @@ export const addType = async balances => {
   var batchStartIdx = 0;
   var batchEndIdx = BATCH_SIZE;
   var nBalances = balances.length;
+  if (batchEndIdx > nBalances) batchEndIdx = nBalances;
 
   while (batchEndIdx <= nBalances) {
     // Get a balances batch (this is shallow copy so referencing objects inside this batch
@@ -54,7 +52,7 @@ export const addType = async balances => {
           }
         }
         if (type === "contract") nContracts++;
-        balance.type = type;
+        balance.address_type = type;
         return balance;
       })
     );
@@ -67,7 +65,7 @@ export const addType = async balances => {
     batchEndIdx = batchStartIdx + BATCH_SIZE;
 
     if (batchEndIdx > nBalances) batchEndIdx = nBalances;
-  }
+  };
 
   console.log(`Found ${nContracts} contracts out of ${nBalances} addresses.`);
 

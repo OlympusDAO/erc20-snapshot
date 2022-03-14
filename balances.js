@@ -49,8 +49,8 @@ export const createBalances = async eventData => {
 		const balance = value.deposits.minus(value.withdrawals);
 
 		closingBalances.push({
-			wallet: key,
-			balance: balance.div(10 ** parseInt(eventData.decimals)).toFixed(parseInt(eventData.decimals))
+			address: key,
+			[`${eventData.symbol}_balance`]: balance.div(10 ** parseInt(eventData.decimals)).toFixed(parseInt(eventData.decimals))
 		});
 	}
 

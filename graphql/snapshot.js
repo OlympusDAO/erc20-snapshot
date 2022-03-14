@@ -1,9 +1,10 @@
-export const INSERT_MANY = /* GraphQL */ `
-  mutation INSERT_MANY($address: String!, $address_type: String!, $gohm_balance: numeric!) {
-    insert_erc20_snapshot(objects: { address: $address, address_type: $address_type, gohm_balance: $gohm_balance }) {
+export const INSERT_UPDATE_MANY = /* GraphQL */ `
+  mutation INSERT_UPDATE_MANY($items: [erc20_snapshot_insert_input!]!) {
+    insert_erc20_snapshot(objects: $items, on_conflict: {constraint: erc20_snapshot_pkey, update_columns: gohm_balance}) {
       affected_rows
     }
   }
+
 `;
 
 export const GET_BATCH = /* GraphQL */ `
