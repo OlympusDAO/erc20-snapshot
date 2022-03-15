@@ -2,13 +2,12 @@
 
 import "dotenv/config";
 
-import { createBalances } from "./balances.js";
-import { checkConfig } from "./config.js";
-import { getEvents } from "./lib/blockchain.js";
+import { createBalances } from "./lib/balances.js";
+import { getEvents } from "./lib/scan-import-events.js";
 import { hasuraWrite } from "./lib/hasura.js";
-import { dumpBalancesFile } from "./export.js";
-import { getConfig } from "./config.js";
-import { addType } from "./wallet-type.js";
+import { dumpBalancesFile } from "./lib/export.js";
+import { addType } from "./lib/address-type.js";
+import { checkConfig, getConfig } from "./lib/config.js";
 
 const Config = getConfig();
 
