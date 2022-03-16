@@ -9,8 +9,6 @@ import { dumpBalancesFile } from "./lib/export.js";
 import { addType } from "./lib/address-type.js";
 import { checkConfig, getConfig } from "./lib/config.js";
 
-const Config = getConfig();
-
 const start = async () => {
   const startTime = new Date();
   const startTimeStr = startTime.toUTCString();
@@ -18,6 +16,8 @@ const start = async () => {
 	// Check if config file (in snapshot.config.json by default) exists. If not, show prompt
 	// questions to create it.
 	await checkConfig();
+  const Config = getConfig();
+  console.log({ Config });
 	// Get all the events for the specified contract address
 	// Format of `events` is [event1, event2, ...]
 	const eventData = await getEvents();
@@ -29,8 +29,6 @@ const start = async () => {
   console.log("Found total of", balances.length, "holders.");
   if (eventData.loadMode.mode == "INCREMENTAL-LOAD") {
     console.log("Found", eventData.newAddresses.size, "addresses to insert/update in the INCREMENTAL LOAD.");
-    console.log("These addresses are:");
-    console.log(Array.from(eventData.newAddresses));
   }
 
   if (Config.checkIfContract) {
@@ -47,6 +45,7 @@ const start = async () => {
   if (Config.writeToLocalFile) {
 	  await dumpBalancesFile(eventData, balances);
   }
+  console.log("\nAll finished!")
 };
 
 (async () => {
