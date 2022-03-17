@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import "dotenv/config";
-
 import { createBalances } from "./lib/balances.js";
 import { getEvents } from "./lib/scan-import-events.js";
 import { hasuraWrite } from "./lib/hasura.js";
