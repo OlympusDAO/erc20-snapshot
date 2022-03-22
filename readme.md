@@ -6,6 +6,18 @@ This command-line utility creates a snapshot of any ERC20 token and writes that 
 - Automatically resumes from the last loaded block.
 - Tested to work with Infura.
 
+## Hasura
+
+Create a table on Hasura named `erc20_snapshot` with the following columns and respective types/params:
+
+- `address` (text, primary key, unique)
+- `gOHM_balance` (numeric)
+- `address_type` (text, nullable)
+- `created_at` (timestamp with time zone, nullable, default: now())
+- `updated_at` (timestamp with time zone, nullable, default: now())
+
+And _Primary Key_ as: `address - erc20_snapshot_pkey`
+
 ## Configuration File / Prompt Parameters
 
 1. Create a `.env` file at the project root with the same Hasura variables present in `.env.example`.
